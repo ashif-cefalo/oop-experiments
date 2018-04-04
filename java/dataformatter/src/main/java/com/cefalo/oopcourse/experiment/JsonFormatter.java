@@ -7,30 +7,14 @@ import java.util.List;
 /**
  * Basic json formatter
  */
-public class JsonFormatter {
-    private DataService dataService;
+public class JsonFormatter extends DataFormatter{
 
     public JsonFormatter(DataService dataService) {
-        this.dataService = dataService;
+        super(dataService);
     }
 
     public boolean execute() {
-        try {
-            dataService.openConnection();
-
-            List<Item> items;
-            items = dataService.readData();
-
-            String formattedData = formatData(items);
-
-            return dataService.exportData(formattedData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            dataService.closeConnection();
-        }
-
-        return false;
+        return super.execute();
     }
 
     /**
@@ -53,18 +37,19 @@ public class JsonFormatter {
      * @param items The list of items
      * @return A string with proper csv format
      */
-    private String formatData(List<Item> items) throws JsonProcessingException {
-        //todo Implement this
-//        JsonUtil.fromItemList(items)
-        throw new RuntimeException("todo");
+
+    protected String formatData(List<Item> items){
+        try {
+            return JsonUtil.fromItemList(items);
+        }
+        catch (JsonProcessingException e){
+            e.printStackTrace();
+        }
+        return "";
     }
 
-    public static void main(String[] args) {
-        DataService dataService = new DataService();
-        JsonFormatter formatter = new JsonFormatter(dataService);
-
-        boolean execute = formatter.execute();
-        System.out.println("status = " + execute);
-
+    @Override
+    protected boolean shouldNotify() {
+        return true;
     }
 }

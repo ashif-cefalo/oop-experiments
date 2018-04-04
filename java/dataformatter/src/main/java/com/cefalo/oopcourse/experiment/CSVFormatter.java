@@ -5,30 +5,14 @@ import java.util.List;
 /**
  * Basic csv formatter
  */
-public class CSVFormatter {
-    private DataService dataService;
+public class CSVFormatter extends DataFormatter{
 
     public CSVFormatter(DataService dataService) {
-        this.dataService = dataService;
+        super(dataService);
     }
 
     public boolean execute() {
-        try {
-            dataService.openConnection();
-
-            List<Item> items;
-            items = dataService.readData();
-
-            String formattedData = formatData(items);
-
-            return dataService.exportData(formattedData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            dataService.closeConnection();
-        }
-
-        return false;
+        return super.execute();
     }
 
     /**
@@ -39,17 +23,17 @@ public class CSVFormatter {
      * @param items The list of items
      * @return A string with proper csv format
      */
-    private String formatData(List<Item> items) {
-//        todo this method needs to be implemented
-        throw new RuntimeException("Todo");
+
+    protected String formatData(List<Item> items) {
+        String formattedString = "";
+        for (Item item : items) {
+            formattedString += String.format("%s, %s, %s\n", item.getId(), item.getTitle(), Double.toString(item.getValue()));
+        }
+        return  formattedString;
     }
 
-    public static void main(String[] args) {
-        DataService dataService = new DataService();
-        CSVFormatter textFormatter = new CSVFormatter(dataService);
-
-        boolean execute = textFormatter.execute();
-        System.out.println("status = " + execute);
-
+    @Override
+    protected boolean shouldNotify() {
+        return false;
     }
 }
