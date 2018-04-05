@@ -7,14 +7,17 @@ import java.util.List;
 /**
  * Basic json formatter
  */
-public class JsonFormatter extends DataFormatter{
+public class JsonFormatter implements DataFormatterProcessor{
+
+    private DataFormatter formatter;
 
     public JsonFormatter(DataService dataService) {
-        super(dataService);
+        this.formatter = new DataFormatter(dataService, this);
     }
 
+
     public boolean execute() {
-        return super.execute();
+        return formatter.execute();
     }
 
     /**
@@ -38,7 +41,7 @@ public class JsonFormatter extends DataFormatter{
      * @return A string with proper csv format
      */
 
-    protected String formatData(List<Item> items){
+    public String formatData(List<Item> items){
         try {
             return JsonUtil.fromItemList(items);
         }
@@ -48,8 +51,7 @@ public class JsonFormatter extends DataFormatter{
         return "";
     }
 
-    @Override
-    protected boolean shouldNotify() {
+    public boolean shouldNotify() {
         return true;
     }
 }

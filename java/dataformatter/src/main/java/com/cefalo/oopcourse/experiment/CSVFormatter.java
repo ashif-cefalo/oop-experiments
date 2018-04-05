@@ -5,14 +5,16 @@ import java.util.List;
 /**
  * Basic csv formatter
  */
-public class CSVFormatter extends DataFormatter{
+public class CSVFormatter implements DataFormatterProcessor{
+
+    private DataFormatter formatter;
 
     public CSVFormatter(DataService dataService) {
-        super(dataService);
+        this.formatter = new DataFormatter(dataService, this);
     }
 
     public boolean execute() {
-        return super.execute();
+        return formatter.execute();
     }
 
     /**
@@ -24,7 +26,7 @@ public class CSVFormatter extends DataFormatter{
      * @return A string with proper csv format
      */
 
-    protected String formatData(List<Item> items) {
+    public String formatData(List<Item> items) {
         String formattedString = "";
         for (Item item : items) {
             formattedString += String.format("%s, %s, %s\n", item.getId(), item.getTitle(), Double.toString(item.getValue()));
@@ -32,8 +34,8 @@ public class CSVFormatter extends DataFormatter{
         return  formattedString;
     }
 
-    @Override
-    protected boolean shouldNotify() {
+
+    public boolean shouldNotify() {
         return false;
     }
 }
